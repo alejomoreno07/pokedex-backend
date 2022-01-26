@@ -1,0 +1,306 @@
+openapi: '3.0.2'
+info:
+  title: pricing
+  version: '0.3'
+  contact:
+    name: Alejandro Moreno
+    email: alejandro.moreno@vtex.com.br
+  description: "allows the management of prices"
+servers:
+  - url: https://{accountName}.api.masterplace.co
+    description: "\"staging\" server"
+    variables:
+      accountName:
+        default: qa
+paths:
+  /auth:
+    post:
+      description: authenticate in the system
+      tags:
+        - create token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/auth'
+            examples:
+              auth request:
+                value: {
+                    "username": "xxxx",
+                    "password" : "xxxx",
+                }
+      responses:
+        200:
+          description: user authenticated
+  /pricing/price/{skuId}:
+    get:
+      description: retrieves existing pricing list, for a specific sku
+      parameters:
+        - name: skuId
+          in: path
+          description: id of a variant of a product
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: an
+          schema:
+            type: string
+            minimum: 0
+          description: accountName
+        - in: query
+          name: si
+          schema:
+            type: string
+            minimum: 0
+          description: sellerId
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: details of the pricing list for a specific sku
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/price'
+              examples:
+                normal response: 
+                  value: {
+                    "skuId": 1,
+                    "listPrice": 12000000,
+                    "costPrice": 10000000
+                  }
+    put:
+      description: update a pricing list
+      parameters:
+        - name: skuId
+          in: path
+          description: id of the variant
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: an
+          schema:
+            type: string
+            minimum: 0
+          description: accountName when SystemAdmin or SystemUser
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createPrice'
+            examples:
+              create pricing list request:
+                value: {
+                      "price":12500,
+                      "listPrice":12500,
+                      "sellerId":"1"
+                  }
+      responses:
+        200:
+          description: pricing list sucessfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/createPrice'
+              examples:
+                normal response: 
+                  value: {
+                    "skuId": 13,
+                    "listPrice": 12500,
+                    "costPrice": 12500
+                  }
+    delete:
+      description: delete an pricing list
+      parameters:
+        - name: skuId
+          in: path
+          description: id of the variant
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: an
+          schema:
+            type: string
+            minimum: 0
+          description: accountName
+        - in: query
+          name: si
+          schema:
+            type: string
+            minimum: 0
+          description: sellerId
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: pricing list sucessfully deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/createPrice'
+              examples:
+                normal response: 
+                  value: {
+                          "skuId": 13,
+                          "listPrice": 12500,
+                          "costPrice": 12500
+                        }
+  /pricing/price:
+    get:
+      description: lists all of the existing pricing lists
+      parameters:
+        - in: query
+          name: an
+          schema:
+            type: string
+            minimum: 0
+          description: accountName
+        - in: query
+          name: si
+          schema:
+            type: string
+            minimum: 0
+          description: sellerId
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 0
+          description: number of elements per page
+        - in: query
+          name: skuId
+          schema:
+            type: string
+            minimum: 0
+          description: key for pagination
+        - in: query
+          name: filter
+          schema:
+            type: string
+            minimum: 0
+          description: value of skuId
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: list of pricing lists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/priceList'
+              examples:
+                normal response: 
+                  value: {
+                    "rows": [
+                      {
+                        "isActive": true,
+                        "SK": "1#101",
+                        "PK": "TENANTcb93cf758df44d51aab7cd0c8118a795#pricing",
+                        "price": 34500000,
+                        "listPrice": 50000000,
+                        "SkuId": "101",
+                        "SkuName": "shoes 1",
+                        "ProductName": "Prueba 4 - X Y Z",
+                        "Images": [
+                          {
+                            "id": 5,
+                            "imageUrl": "https://seller-portal-images.s3.amazonaws.com/TENANTcb93cf758df44d51aab7cd0c8118a795/1/9acd2929-e82e-4973-babf-2dc59e62ca97photo-1543163521-1bf539c55dd2.jfif",
+                            "imageName": "photo-1543163521-1bf539c55dd2.jfif"
+                          }
+                        ]
+                      }
+                    ],
+                    "lastEvaluatedKey": {
+                      "skuId": 101
+                    },
+                    "count": 1
+                  }
+    post:
+      description: creation of a pricing list
+      parameters:
+        - in: query
+          name: an
+          schema:
+            type: string
+            minimum: 0
+          description: accountName when SystemAdmin or SystemUser
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/createPrice'
+            examples:
+              create pricing list request:
+                value: {
+                    "skuId":300,
+                    "price":125,
+                    "listPrice":1000,
+                    "sellerId":"1"
+                }
+      responses:
+        200:
+          description: pricing list sucessfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/createPrice'
+              examples:
+                normal response: 
+                  value: {
+                      "skuId": 13,
+                      "listPrice": 1000,
+                      "costPrice": 125
+                    }
+
+components:
+  securitySchemes:
+    bearerAuth:            # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+  schemas:
+    auth:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+    createPrice:
+      type: object
+      properties:
+        price: 
+          type: integer
+        listPrice:
+          type: integer
+        sellerId:
+          type: string
+        skuId:
+          type: integer
+    price:
+      type: object
+      properties:
+        skuId:
+          type: integer
+        costPrice:
+          type: integer
+        listPrice:
+          type: integer
+    priceList:
+      type: object
+      properties:
+        rows:
+          type: object
+        lastEvaluatedKey:
+          type: object
+        count:
+          type: integer
