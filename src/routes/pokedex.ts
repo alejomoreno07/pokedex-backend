@@ -5,4 +5,6 @@ const router = new Router();
 
 router.get('/pokemon/:pokemonName', pokedex.getPokemonInfo);
 
+router.get('/pokemon', pokedex.getListOfPokemon);
+
 export const routes = router.routes();
