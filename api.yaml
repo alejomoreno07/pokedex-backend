@@ -1,38 +1,33 @@
 openapi: '3.0.2'
 info:
-  title: pricing
-  version: '0.3'
+  title: POKEDEX
+  version: '0.1'
   contact:
     name: Alejandro Moreno
     email: alejandro.moreno@vtex.com.br
-  description: "allows the management of prices"
+  description: "A basic pokedex backend"
 servers:
-  - url: https://{accountName}.api.masterplace.co
-    description: "\"staging\" server"
+  - url: http://{host}
+    description: "\"qa\" server"
     variables:
-      accountName:
-        default: qa
+      host:
+        default: localhost:7000
 paths:
-  /auth:
-    post:
-      description: authenticate in the system
+  /health:
+    get:
+      description: check if the application is running
       tags:
-        - create token
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/auth'
-            examples:
-              auth request:
-                value: {
-                    "username": "xxxx",
-                    "password" : "xxxx",
-                }
+        - GET
       responses:
-        200:
-          description: user authenticated
+        '200':
+          description: The service is alive
+          content:
+            application/json:
+              examples:
+                normal response: 
+                  value: {
+                    "isAlive": true
+                  }
   /pricing/price/{skuId}:
     get:
       description: retrieves existing pricing list, for a specific sku

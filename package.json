@@ -8,7 +8,7 @@
     "test": "tsc && jest",
     "start": "node built/index.js",
     "dev": "tsc && node built/utils/dynamoInitDB.js && npx nodemon -L",
-    "watch": "npx nodemon -L"
+    "watch": "tsc && npx nodemon -L"
   },
   "repository": {
     "type": "git",
