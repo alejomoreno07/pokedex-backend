@@ -1,11 +1,12 @@
 import { Context } from "koa"
-import { pokedex } from "../controllers"
+import { pokedexController } from "../controllers"
+import { pokedexValidator } from "../validators"
 
 export const getPokemonInfo = async(ctx:Context) =>{
     try{
         const { params } = ctx;
         let pokemonName:string=  params.pokemonName.toString();
-        let response = await pokedex.pokemonInfo(pokemonName);
+        let response = await pokedexController.pokemonInfo(pokemonName);
         ctx.status = 200;
         ctx.body = response;
     } catch(error) {
@@ -13,16 +14,18 @@ export const getPokemonInfo = async(ctx:Context) =>{
     }
 }
 
-export const  getListOfPokemon = async(ctx:Context) => {
+export const  getListOfPokemon = async(ctx:Context)=> {
     try{
         const { query } = ctx;
-        let page:number= (query.page === undefined)? 0:+(query.offset.toString());
+        await pokedexValidator.validatePokedexListingParams(query);
+        let page:number= (query.page === undefined)? 0:+(query.page.toString());
         let limit:number=(query.limit === undefined)? 10:+(query.limit.toString());
         let offset:number= page*limit;
-        let response = await pokedex.pokemonList({limit: limit, offset:offset});
+        let response = await pokedexController.pokemonList({limit: limit, offset:offset});
         ctx.status = 200;
         ctx.body = response;
     } catch(error){
-        console.log(error);
+        ctx.status = 400;
+        ctx.body = error;
     } 
 }
