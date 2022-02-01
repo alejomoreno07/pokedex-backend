@@ -16,8 +16,7 @@ export const pokemonInfo = async (name:string):Promise<Pokemon> =>{
 export const pokemonList = async (pokemonQuery: PokedexQuery ):Promise<Pokemon[]> => {
     const { POKEMON_INFO_URL } = constants;
     let url = POKEMON_INFO_URL+`?limit=${pokemonQuery.limit}&offset=${pokemonQuery.offset}`;
-    let response = await axios.get(url);
-    let pokemonList:PokedexListing =  response.data;
+    let pokemonList:PokedexListing =  await getAxios(url);
     let pokemonItems:Promise<Pokemon>[] = pokemonList.results.map((pokemonItem:NamedApiResource) => {
         return getAxios(pokemonItem.url);
     });
