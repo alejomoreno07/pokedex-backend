@@ -263,13 +263,13 @@ components:
       type: http
       scheme: bearer
   schemas:
-    auth:
+    PokedexQuery:
       type: object
       properties:
-        username:
-          type: string
-        password:
-          type: string
+        limit: 
+          type: integer
+        page: 
+          type: integer
     createPrice:
       type: object
       properties:
